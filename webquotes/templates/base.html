@@ -4,11 +4,30 @@
     <title>WebQuotes</title>
     <meta charset="utf-8">
 
+    <link rel="stylesheet" href="{{ static_url('style.css') }}">
     {% block head %} {% end %}
 </head>
 
 <body>
-    {% block body %} {% end %}
-</body>
+    {% if current_user %}
+    <div class="navigation">
+        <p><a href="/">Home</a></p>
+        <p><a href="/add">Add a quote</a></p>
+        <p><a href="/random">Random one</a></p>
+        <p><a href="/logout">Logout</a></p>
+    </div>
+    {% end %}
 
+    {% block body %} {% end %}
+
+    {% if current_user %}
+    <div class="footer">
+        All uploaded content licensed under
+        <a href="http://www.wtfpl.net/txt/copying/">
+            Do What the Fuck You Want to Public License</a>.
+        You have to agree with it in case you going to publish something here.
+        If you aren't - close the page and go fuck away.
+    </div>
+    {% end %}
+</body>
 </html>

@@ -8,4 +8,4 @@ from .base import WebAuthHandler
 class HomeHandler(WebAuthHandler):
     @tornado.web.authenticated
     def get(self):
-        self.write('<p>hello world</p>')
+        self.render('home.html')
