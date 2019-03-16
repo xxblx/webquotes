@@ -6,7 +6,8 @@ from time import mktime
 import tornado.web
 
 from .base import WebAuthHandler
-from ..sql.insert import InsertQuotes
+from ..sql.insert import InsertQueries
+
 
 class AddQuoteHandler(WebAuthHandler):
     @tornado.web.authenticated
@@ -18,6 +19,7 @@ class AddQuoteHandler(WebAuthHandler):
         now = datetime.now()
         title = self.get_argument('quote-title', None)
         text = self.get_argument('quote-text')
+        tags = self.get_argument('quote-tags').split(',')
 
         if not text:
             self.redirect('/add')
@@ -30,7 +32,8 @@ class AddQuoteHandler(WebAuthHandler):
         args = (title, text, now, self.current_user.decode())
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
-                await cur.execute(InsertQuotes.sql(), args)
-                # TODO: tags
+                await cur.execute(InsertQueries.quote, args)
+                res = await cur.fetchall()
+                print(res)
 
         self.redirect('/')

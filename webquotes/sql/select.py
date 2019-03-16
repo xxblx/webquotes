@@ -2,19 +2,20 @@
 
 
 class SelectQuery:
-    tmpl = 'SELECT %(cols)s FROM %(name)s %(where)s'
+    tmpl = """
+SELECT %(cols)s FROM %(name)s 
+%(where)s
+"""
     name = None
     cols = None
     where = None
 
     @staticmethod
-    def get_where(where):
-        """
-        WHERE col = %s and col2 = %s
-        """
-        if where:
+    def get_where(cols):
+        """ WHERE col = %s and col2 = %s """
+        if cols:
             return 'WHERE ' + ', '.join(
-                ['{} = %s'.format(c) for c in where]
+                ['{} = %s'.format(c) for c in cols]
             )
         else:
             return ''
@@ -29,7 +30,13 @@ class SelectQuery:
         return cls.tmpl % dct
 
 
-class SelectUsers(SelectQuery):
+class SelectPasswordHash(SelectQuery):
     name = 'users'
     cols = ('password_hash',)
+    where = ('username',)
+
+
+class SelectUserId(SelectQuery):
+    name = 'users'
+    cols = ('%s', '%s', 'user_id', '%s')
     where = ('username',)

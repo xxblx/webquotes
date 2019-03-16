@@ -4,7 +4,7 @@ import tornado.escape
 import tornado.web
 
 from .base import WebAuthHandler
-from ..sql.select import SelectUsers
+from ..sql.select import SelectPasswordHash
 
 
 class LoginHandler(WebAuthHandler):
@@ -20,7 +20,7 @@ class LoginHandler(WebAuthHandler):
 
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
-                await cur.execute(SelectUsers.sql(), (username,))
+                await cur.execute(SelectPasswordHash.sql(), (username,))
                 _res = await cur.fetchall()
 
         if _res:

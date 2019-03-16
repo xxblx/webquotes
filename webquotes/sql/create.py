@@ -79,7 +79,7 @@ class CreateTags(CreateQuery):
     name = 'tags'
     cols_dct = {
         'tag_id': 'SERIAL PRIMARY KEY',
-        'tag_name': 'TEXT'
+        'tag_name': 'TEXT UNIQUE'
     }
 
 
