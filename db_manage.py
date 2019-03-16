@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import getpass
+from datetime import datetime
+from time import mktime
 import argparse
+import getpass
 
 import nacl.pwhash
 import psycopg2
 
 from webquotes.conf import DSN
 from webquotes.sql.create import get_create_queries
-from webquotes.sql.insert import InsertUsers
+from webquotes.sql.insert import InsertUsers, InsertQuotes
 
 
 def create_tables():
@@ -28,6 +30,15 @@ def create_user(username):
             cur.execute(InsertUsers.sql(), (username, hashed))
 
 
+def insert_quote(title, text, username):
+    now = mktime(datetime.now().utctimetuple())
+    with psycopg2.connect(DSN) as conn:
+        with conn.cursor() as cur:
+            cur.execute(InsertQuotes.sql(), (title, text, now, username))
+            quote_id = cur.fetchall()[0][0]
+    print(quote_id)
+
+
 COMMANDS = {
     'init': {
         'func': create_tables,
@@ -36,6 +47,10 @@ COMMANDS = {
     'user-add': {
         'func': create_user,
         'kw': ['username']
+    },
+    'quote-add': {
+        'func': insert_quote,
+        'kw': ['title', 'text', 'username']
     }
 }
 
@@ -50,6 +65,12 @@ def main():
     user_add_parser = subparsers.add_parser('user-add')
     user_add_parser.set_defaults(used='user-add')
     user_add_parser.add_argument('-u', '--username', type=str, required=True)
+
+    quote_add_parser = subparsers.add_parser('quote-add')
+    quote_add_parser.set_defaults(used='quote-add')
+    quote_add_parser.add_argument('-T', '--title', type=str)
+    quote_add_parser.add_argument('-t', '--text', type=str, required=True)
+    quote_add_parser.add_argument('-u', '--username', type=str)
 
     args = parser.parse_args()
     if 'used' not in args:

@@ -6,3 +6,21 @@
 .footer {
     font-size: 0.8em;
 }
+
+.add-quote {
+    padding: 0.5em;
+    width: 40%;
+    display: block;
+}
+
+.add-quote textarea {
+    width: 100%;
+}
+
+.add-text textarea {
+    height: 10em;
+}
+
+.submit-button {
+    padding-top: 0.5em;
+}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div>
+    <form id="add-quote-form" action="/add" method="POST">
+        {% raw xsrf_form_html() %}
+
+        <div class="add-quote">
+
+            <div class="add-title">
+                <label>Title (optional)</label>
+                <textarea name="quote-title" form="add-quote-form"></textarea>
+            </div>
+
+            <div class="add-text">
+                <label>Quote</label>
+                <textarea name="quote-text" form="add-quote-form"></textarea>
+            </div>
+
+
+            <div class="submit-button">
+                <button type="submit">Submit</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+{% end %}
