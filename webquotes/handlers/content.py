@@ -20,14 +20,15 @@ class AddQuoteHandler(WebAuthHandler):
         title = self.get_argument('quote-title', None)
         text = self.get_argument('quote-text')
         tags = self.get_argument('quote-tags')
-        if tags:
-            tags = tags.split(',')
-        else:
-            tags = None
 
         if not text:
             self.redirect('/add')
             return
+
+        if tags:
+            tags = tags.split(',')
+        else:
+            tags = None
 
         if not title:  # empty str => None
             title = None
