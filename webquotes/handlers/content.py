@@ -19,7 +19,11 @@ class AddQuoteHandler(WebAuthHandler):
         now = datetime.now()
         title = self.get_argument('quote-title', None)
         text = self.get_argument('quote-text')
-        tags = self.get_argument('quote-tags').split(',')
+        tags = self.get_argument('quote-tags')
+        if tags:
+            tags = tags.split(',')
+        else:
+            tags = None
 
         if not text:
             self.redirect('/add')
@@ -38,9 +42,10 @@ class AddQuoteHandler(WebAuthHandler):
 
                 # Insert new tags and new connections quote-tags to db
                 # Repeat %s in query template as many as there are tags
-                _values = ', '.join(['(%s)'] * len(tags))
-                _sql = InsertQueries.quote_tags.format(_values)
-                _tags_args = tags + [_res[0][0], _res[0][0]]
-                await cur.execute(_sql, _tags_args)
+                if tags:
+                    _values = ', '.join(['(%s)'] * len(tags))
+                    _sql = InsertQueries.quote_tags.format(_values)
+                    _tags_args = tags + [_res[0][0], _res[0][0]]
+                    await cur.execute(_sql, _tags_args)
 
         self.redirect('/')
