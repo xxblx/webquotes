@@ -1,4 +1,8 @@
 
+body {
+    padding-left: 1em;
+}
+
 .navigation p {
     display: inline;
 }
@@ -23,4 +27,24 @@
 
 .submit-button {
     padding-top: 0.5em;
+}
+
+.quote {
+    display: block;
+    padding-top: 1em;
+    padding-bottom: 1.5em;
+    border-bottom: 1px solid gray;
+}
+
+.quote-head {
+    display: inline;
+}
+
+.quote-tags {
+    padding-top: 0.3em;
+    font-size: 0.8em;
+}
+
+.switch-page {
+    padding-bottom: 1em;
 }

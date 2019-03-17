@@ -1,5 +1,33 @@
 {% extends "base.html" %}
 
 {% block body %}
-<p>Hello World</p>
+
+{% for quote in quotes_data %}
+    <div class="quote">
+        <div class="quote-head">
+            <a href="/quote/{{ quote[0] }}">#{{ quote[0] }}</a>:
+            {% if quote[1] %}
+                <b>{{ quote[1] }}</b>:
+            {% end %}
+
+            {{ quote[3] }}
+        </div>
+        <div class="quote-content">
+            {{ quote[2] }}
+        </div>
+        {% if quote[4] %}
+            <div class="quote-tags">
+            Tags:
+                {% for tag in quote[4] %}
+                    <a href="/tag/{{ tag['tag_id'] }}">{{ tag['tag_name'] }}</a>
+                {% end %}
+            </div>
+        {% end %}
+    </div>
+{% end %}
+
+<div class="switch-page">
+    <a href="/?offset={{ next_offset }}&num={{ quotes_num }}">Next page</a>
+</div>
+
 {% end %}
