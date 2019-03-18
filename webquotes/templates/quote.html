@@ -22,6 +22,11 @@
             {% end %}
         </div>
     {% end %}
+    <div class="quote-rating">
+        Rating: <a href="/rate/down/{{ quote[0] }}?next={{ uri }}">-</a>
+        ({{ quote[5] }})
+        <a href="/rate/up/{{ quote[0] }}?next={{ uri }}">+</a>
+    </div>
 </div>
 
 {% end %}

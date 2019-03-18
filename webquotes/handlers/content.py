@@ -58,13 +58,13 @@ class AddQuoteHandler(WebAuthHandler):
 class GetQuoteHandler(WebAuthHandler):
     @tornado.web.authenticated
     async def get(self, quote_id):
+        uri = self.request.uri.rstrip('/')
         args = (quote_id.rstrip('/'), quote_id.rstrip('/'))
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(SelectQueries.quote_by_id, args)
                 _res = await cur.fetchall()
 
-        # TODO: process quote rating
         if _res:
             item = _res[0]
             item = list(item)
@@ -72,7 +72,7 @@ class GetQuoteHandler(WebAuthHandler):
             if item[4][0] is None:  # tags
                 item[4] = None
 
-            self.render('quote.html', quote=item)
+            self.render('quote.html', quote=item, uri=uri)
         else:
             self.redirect('/')
 
@@ -80,12 +80,12 @@ class GetQuoteHandler(WebAuthHandler):
 class GetRandomQuoteHandler(WebAuthHandler):
     @tornado.web.authenticated
     async def get(self):
+        uri = self.request.uri
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(SelectQueries.random_quote)
                 _res = await  cur.fetchall()
 
-        # TODO: process quote rating
         if _res:
             item = _res[0]
             item = list(item)
@@ -93,7 +93,7 @@ class GetRandomQuoteHandler(WebAuthHandler):
             if item[4][0] is None:  # tags
                 item[4] = None
 
-            self.render('quote.html', quote=item)
+            self.render('quote.html', quote=item, uri=uri)
         else:
             self.redirect('/')
 
@@ -101,6 +101,7 @@ class GetRandomQuoteHandler(WebAuthHandler):
 class RateQuote(WebAuthHandler):
     @tornado.web.authenticated
     async def get(self, quote_id):
+        redirect_uri = self.get_argument('next', '/')
         action = self.request.uri.split('/')[2]
         if action == 'up':
             func = SelectQueries.quote_rating_up
@@ -111,4 +112,4 @@ class RateQuote(WebAuthHandler):
             async with conn.cursor() as cur:
                 await cur.execute(func, (quote_id,))
 
-        self.redirect('/')
+        self.redirect(redirect_uri)

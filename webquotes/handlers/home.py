@@ -32,7 +32,6 @@ class HomeHandler(WebAuthHandler):
                 await cur.execute(sql, args)
                 _res = await cur.fetchall()
 
-        # TODO: process quotes rating
         quotes_data = []
         for item in _res:
             item = list(item)
