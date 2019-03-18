@@ -9,7 +9,7 @@ import tornado.web
 
 from .conf import DEBUG, WORKERS, TOKEN_EXPIRES_TIME
 from .handlers.auth import LoginHandler, LogoutHandler
-from .handlers.content import AddQuoteHandler
+from .handlers.content import AddQuoteHandler, GetQuoteHandler
 from .handlers.home import HomeHandler
 
 
@@ -25,7 +25,8 @@ class WebQuotesApp(tornado.web.Application):
             (r'/', HomeHandler),
             (r'/login', LoginHandler),
             (r'/logout', LogoutHandler),
-            (r'/add', AddQuoteHandler)
+            (r'/add', AddQuoteHandler),
+            (r'/quote/([0-9]*/?)', GetQuoteHandler)
         ]
 
         template_path = os.path.join(os.path.dirname(__file__), 'templates')

@@ -57,3 +57,32 @@ GROUP BY
 ORDER BY
     q.datetime DESC
     """
+
+    quote_by_id = """
+SELECT
+    q.quote_id, 
+    quote_title, 
+    quote, 
+    datetime,
+    array_agg(to_json(t))
+FROM
+    quotes q
+    
+    LEFT JOIN
+    (SELECT
+        tq.quote_id,
+        tq.tag_id,
+        t.tag_name
+    FROM
+        tags_quotes tq
+        INNER JOIN tags t
+            ON tq.tag_id = t.tag_id
+    WHERE
+        tq.quote_id = %s
+    ) t
+        ON q.quote_id = t.quote_id
+WHERE
+    q.quote_id = %s
+GROUP BY
+    q.quote_id
+    """

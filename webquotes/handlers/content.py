@@ -7,6 +7,7 @@ import tornado.web
 
 from .base import WebAuthHandler
 from ..sql.insert import InsertQueries
+from ..sql.select import SelectQueries
 
 
 class AddQuoteHandler(WebAuthHandler):
@@ -52,3 +53,24 @@ class AddQuoteHandler(WebAuthHandler):
                     await cur.execute(_sql, _tags_args)
 
         self.redirect('/')
+
+
+class GetQuoteHandler(WebAuthHandler):
+    @tornado.web.authenticated
+    async def get(self, quote_id):
+        args = (quote_id, quote_id)
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(SelectQueries.quote_by_id, args)
+                _res = await  cur.fetchall()
+
+        if _res:
+            item = _res[0]
+            item = list(item)
+            item[3] = datetime.utcfromtimestamp(item[3])
+            if item[4][0] is None:  # tags
+                item[4] = None
+
+            self.render('quote.html', quote=item)
+        else:
+            self.redirect('/')
