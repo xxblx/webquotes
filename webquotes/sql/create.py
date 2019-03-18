@@ -91,6 +91,57 @@ class CreateTagsQuotes(CreateQuery):
     }
 
 
+class CreateDataCounters(CreateQuery):
+    name = 'data_counters'
+    cols_dct = {
+        'row_id': 'SERIAL PRIMARY KEY',
+        'counter_name': 'TEXT UNIQUE',
+        'counter_value': 'SERIAL'
+    }
+
+
+class Triggers:
+    quotes_increase = """
+CREATE TRIGGER quotes_increase_trigger 
+AFTER INSERT ON quotes
+EXECUTE PROCEDURE quotes_increase()
+    """
+
+    quotes_decrease = """
+CREATE TRIGGER quotes_decrease_trigger 
+AFTER DELETE ON quotes
+EXECUTE PROCEDURE quotes_decrease()
+    """
+
+
+class Procedures:
+    quotes_increase = """
+CREATE OR REPLACE FUNCTION quotes_increase() RETURNS TRIGGER AS $example_table$
+    BEGIN
+        INSERT INTO data_counters(counter_name) 
+        VALUES ('quotes_count')
+        ON CONFLICT (counter_name)
+            DO UPDATE
+            SET counter_value = EXCLUDED.counter_value + 1;
+        RETURN NEW;
+    END;
+$example_table$ LANGUAGE plpgsql;
+    """
+
+    quotes_decrease = """
+CREATE OR REPLACE FUNCTION quotes_decrease() RETURNS TRIGGER AS $example_table$
+    BEGIN
+        INSERT INTO data_counters(counter_name) 
+        VALUES ('quotes_count')
+        ON CONFLICT (counter_name)
+            DO UPDATE
+            SET counter_value = EXCLUDED.counter_value - 1;
+        RETURN NEW;
+    END;
+$example_table$ LANGUAGE plpgsql;  
+    """
+
+
 def get_create_queries():
     modules = sys.modules[__name__]
     for item_name, item in inspect.getmembers(modules, inspect.isclass):

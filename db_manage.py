@@ -10,16 +10,26 @@ import nacl.pwhash
 import psycopg2
 
 from webquotes.conf import DSN
-from webquotes.sql.create import get_create_queries
+from webquotes.sql.create import get_create_queries, Triggers, Procedures
 from webquotes.sql.insert import InsertQueries
 
 
-def create_tables():
+def init_db():
     queries = get_create_queries()
     with psycopg2.connect(DSN) as conn:
         with conn.cursor() as cur:
+            # Create tables
             for q in queries:
                 cur.execute(q)
+
+            # Create procedures and triggers
+            cur.execute(Procedures.quotes_increase)
+            cur.execute(Procedures.quotes_decrease)
+            cur.execute(Triggers.quotes_increase)
+            cur.execute(Triggers.quotes_decrease)
+
+            # Insert values to "service" table with counters
+            cur.execute(InsertQueries.counter_quotes)
 
 
 def create_user(username):
@@ -42,7 +52,7 @@ def insert_quote(title, text, username):
 
 COMMANDS = {
     'init': {
-        'func': create_tables,
+        'func': init_db,
         'kw': []
     },
     'user-add': {

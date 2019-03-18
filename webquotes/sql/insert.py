@@ -58,3 +58,8 @@ SELECT
 FROM
     new_tags
     """
+
+    counter_quotes = """
+INSERT INTO data_counters (counter_name, counter_value)
+VALUES ('quotes_count', 0)
+    """
