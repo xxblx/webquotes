@@ -86,3 +86,53 @@ WHERE
 GROUP BY
     q.quote_id
     """
+
+    random_quote = """
+WITH random_quote as (
+    SELECT
+        quote_id
+    FROM
+        quotes
+    OFFSET
+        floor(
+            random() * (
+                SELECT 
+                    counter_value 
+                FROM 
+                    data_counters 
+                WHERE 
+                    counter_name = 'quotes_count'
+                ) 
+            )
+    LIMIT
+        1
+) 
+SELECT
+    q.quote_id, 
+    quote_title, 
+    quote, 
+    datetime,
+    array_agg(to_json(t))
+FROM
+    quotes q
+    
+    INNER JOIN random_quote rq
+        ON q.quote_id = rq.quote_id
+    
+    LEFT JOIN
+    (SELECT
+        tq.quote_id,
+        tq.tag_id,
+        t.tag_name
+    FROM
+        tags_quotes tq
+        INNER JOIN random_quote rq
+            ON tq.quote_id = rq.quote_id
+        
+        INNER JOIN tags t
+            ON tq.tag_id = t.tag_id
+    ) t
+        ON q.quote_id = t.quote_id
+GROUP BY
+    q.quote_id
+    """

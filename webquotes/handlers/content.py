@@ -74,3 +74,23 @@ class GetQuoteHandler(WebAuthHandler):
             self.render('quote.html', quote=item)
         else:
             self.redirect('/')
+
+
+class GetRandomQuoteHandler(WebAuthHandler):
+    @tornado.web.authenticated
+    async def get(self):
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(SelectQueries.random_quote)
+                _res = await  cur.fetchall()
+
+        if _res:
+            item = _res[0]
+            item = list(item)
+            item[3] = datetime.utcfromtimestamp(item[3])
+            if item[4][0] is None:  # tags
+                item[4] = None
+
+            self.render('quote.html', quote=item)
+        else:
+            self.redirect('/')
