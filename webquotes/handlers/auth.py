@@ -9,8 +9,10 @@ from ..sql.select import SelectQueries
 
 class LoginHandler(WebAuthHandler):
     def get(self):
+        next_uri = self.get_argument('next', '/')
+        self.set_secure_cookie('next', next_uri, expires_days=1)
         if self.get_current_user():
-            self.redirect('/')
+            self.redirect(next_uri)
         else:
             self.render('login.html')
 
@@ -33,11 +35,17 @@ class LoginHandler(WebAuthHandler):
             raise tornado.web.HTTPError(403, 'invalid username or password')
 
         self.set_secure_cookie('username', username)
-        self.redirect(self.get_argument('next', '/'))
+
+        next_uri = self.get_secure_cookie('next')
+        if not next_uri:
+            next_uri = '/'
+        self.clear_cookie('next')
+        self.redirect(next_uri)
 
 
 class LogoutHandler(WebAuthHandler):
     def get(self):
         if self.get_current_user():
             self.clear_cookie('username')
+            self.clear_cookie('next')
         self.redirect(self.get_argument('next', '/'))
