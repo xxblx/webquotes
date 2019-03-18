@@ -19,7 +19,7 @@ class AddQuoteHandler(WebAuthHandler):
         now = datetime.now()
         title = self.get_argument('quote-title', None)
         text = self.get_argument('quote-text')
-        tags = self.get_argument('quote-tags')
+        tags = self.get_argument('quote-tags', None)
 
         if not text:
             self.redirect('/add')
@@ -27,6 +27,8 @@ class AddQuoteHandler(WebAuthHandler):
 
         if tags:
             tags = tags.split(',')
+        # Because html template uses textarea usually the value is
+        # an empty string after get_argument
         else:
             tags = None
 
