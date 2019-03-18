@@ -64,6 +64,7 @@ class GetQuoteHandler(WebAuthHandler):
                 await cur.execute(SelectQueries.quote_by_id, args)
                 _res = await cur.fetchall()
 
+        # TODO: process quote rating
         if _res:
             item = _res[0]
             item = list(item)
@@ -84,6 +85,7 @@ class GetRandomQuoteHandler(WebAuthHandler):
                 await cur.execute(SelectQueries.random_quote)
                 _res = await  cur.fetchall()
 
+        # TODO: process quote rating
         if _res:
             item = _res[0]
             item = list(item)
@@ -94,3 +96,19 @@ class GetRandomQuoteHandler(WebAuthHandler):
             self.render('quote.html', quote=item)
         else:
             self.redirect('/')
+
+
+class RateQuote(WebAuthHandler):
+    @tornado.web.authenticated
+    async def get(self, quote_id):
+        action = self.request.uri.split('/')[2]
+        if action == 'up':
+            func = SelectQueries.quote_rating_up
+        elif action == 'down':
+            func = SelectQueries.quote_rating_down
+
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(func, (quote_id,))
+
+        self.redirect('/')

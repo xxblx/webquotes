@@ -22,11 +22,15 @@ def init_db():
             for q in queries:
                 cur.execute(q)
 
-            # Create procedures and triggers
+            # Create functions and triggers
             cur.execute(Procedures.quotes_increase)
             cur.execute(Procedures.quotes_decrease)
-            cur.execute(Triggers.quotes_increase)
+            cur.execute(Procedures.rating_increase)
+            cur.execute(Procedures.rating_decrease)
+            cur.execute(Procedures.new_rating)
             cur.execute(Triggers.quotes_decrease)
+            cur.execute(Triggers.quotes_increase)
+            cur.execute(Triggers.rating)
 
             # Insert values to "service" table with counters
             cur.execute(InsertQueries.counter_quotes)

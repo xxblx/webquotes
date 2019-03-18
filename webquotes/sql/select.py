@@ -14,6 +14,7 @@ WHERE
     # WITH at the beginning is needed for limiting internal rows selection
     # from tags and quotes_tags tables, e.g. for selecting only tags used
     # with this quotes
+    # TODO: add rating to select
     quotes = """
 WITH quotes_ids AS (
     SELECT
@@ -58,6 +59,7 @@ ORDER BY
     q.datetime DESC
     """
 
+    # TODO: add rating to select
     quotes_by_tag = """
     WITH quotes_ids AS (
         SELECT
@@ -106,6 +108,7 @@ ORDER BY
         q.datetime DESC
     """
 
+    # TODO: add rating to select
     quote_by_id = """
 SELECT
     q.quote_id, 
@@ -135,6 +138,7 @@ GROUP BY
     q.quote_id
     """
 
+    # TODO: add rating to select
     random_quote = """
 WITH random_quote as (
     SELECT
@@ -185,3 +189,10 @@ GROUP BY
     q.quote_id
     """
 
+    quote_rating_up = """
+SELECT rating_increase(%s)
+    """
+
+    quote_rating_down = """
+SELECT rating_decrease(%s);
+    """

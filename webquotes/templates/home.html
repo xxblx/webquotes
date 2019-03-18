@@ -23,6 +23,12 @@
                 {% end %}
             </div>
         {% end %}
+        <div class="quote-rating">
+            Rating: <a href="/rate/down/{{ quote[0] }}">-</a>
+            {# TODO: correct rating value #}
+            (0)
+            <a href="/rate/up/{{ quote[0] }}">+</a>
+        </div>
     </div>
 {% end %}
 
