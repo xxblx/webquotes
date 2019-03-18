@@ -10,15 +10,26 @@ from ..sql.select import SelectQueries
 
 class HomeHandler(WebAuthHandler):
     @tornado.web.authenticated
-    async def get(self):
+    async def get(self, tag_id=None):
         offset = int(self.get_argument('offset', 0))
         num = int(self.get_argument('num', 100))
         if num > 100 or num < 0:
             num = 100
 
+        # host/tag/num
+        if self.request.uri.startswith('/tag') and tag_id is not None:
+            args = (tag_id.rstrip('/'), offset, num)
+            sql = SelectQueries.quotes_by_tag
+            uri = self.request.uri.rstrip('/')
+        # host/
+        else:
+            args = (offset, num)
+            sql = SelectQueries.quotes
+            uri = self.request.uri
+
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
-                await cur.execute(SelectQueries.quotes, (offset, num))
+                await cur.execute(sql, args)
                 _res = await cur.fetchall()
 
         quotes_data = []
@@ -31,4 +42,4 @@ class HomeHandler(WebAuthHandler):
 
         next_offset = offset+num
         self.render('home.html', quotes_data=quotes_data, quotes_num=num,
-                    next_offset=next_offset)
+                    next_offset=next_offset, uri=uri)

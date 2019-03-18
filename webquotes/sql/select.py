@@ -58,6 +58,54 @@ ORDER BY
     q.datetime DESC
     """
 
+    quotes_by_tag = """
+    WITH quotes_ids AS (
+        SELECT
+            q.quote_id
+        FROM
+            quotes q 
+            INNER JOIN tags_quotes tq
+                ON q.quote_id = tq.quote_id
+        WHERE
+            tq.tag_id = %s
+        ORDER BY
+            datetime DESC
+        OFFSET %s ROWS
+        FETCH FIRST %s ROWS ONLY
+    )
+
+    SELECT
+        q.quote_id, 
+        quote_title, 
+        quote, 
+        datetime, 
+        array_agg(to_json(t))
+    FROM
+        quotes q
+
+        INNER JOIN quotes_ids qi
+            ON q.quote_id = qi.quote_id
+
+        LEFT JOIN
+        (SELECT
+            tq.quote_id, 
+            tq.tag_id,
+            t.tag_name
+        FROM
+            tags_quotes tq 
+            INNER JOIN tags t
+                ON tq.tag_id = t.tag_id
+
+            INNER JOIN quotes_ids qi
+                ON tq.quote_id = qi.quote_id
+        ) t
+            ON q.quote_id = t.quote_id
+    GROUP BY
+        q.quote_id
+    ORDER BY
+        q.datetime DESC
+    """
+
     quote_by_id = """
 SELECT
     q.quote_id, 
@@ -136,3 +184,4 @@ FROM
 GROUP BY
     q.quote_id
     """
+

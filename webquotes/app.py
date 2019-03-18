@@ -28,7 +28,8 @@ class WebQuotesApp(tornado.web.Application):
             (r'/logout', LogoutHandler),
             (r'/add', AddQuoteHandler),
             (r'/quote/([0-9]*/?)', GetQuoteHandler),
-            (r'/random', GetRandomQuoteHandler)
+            (r'/random', GetRandomQuoteHandler),
+            (r'/tag/([0-9]*/?)', HomeHandler)
         ]
 
         template_path = os.path.join(os.path.dirname(__file__), 'templates')
