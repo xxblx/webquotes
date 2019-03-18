@@ -58,11 +58,11 @@ class AddQuoteHandler(WebAuthHandler):
 class GetQuoteHandler(WebAuthHandler):
     @tornado.web.authenticated
     async def get(self, quote_id):
-        args = (quote_id, quote_id)
+        args = (quote_id.rstrip('/'), quote_id.rstrip('/'))
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(SelectQueries.quote_by_id, args)
-                _res = await  cur.fetchall()
+                _res = await cur.fetchall()
 
         if _res:
             item = _res[0]
