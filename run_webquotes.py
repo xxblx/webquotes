@@ -18,13 +18,16 @@ def main():
 
     # If some external notifications backend is enabled, create a queue
     # for notification processing and start external sending worker
-    queue = None
+    async_queue = None
+    sync_queue = None
     if any(item['enabled'] for item in EXTERNAL_NOTIFICATIONS.values()):
         queue = janus.Queue(loop=asyncio_loop)
         notifications_task = asyncio_loop.create_task(
             run_manager(queue.async_q)
         )
-    app = WebQuotesApp(loop, db_pool, queue.async_q)
+        async_queue = queue.async_q
+        sync_queue = queue.sync_q
+    app = WebQuotesApp(loop, db_pool, async_queue)
 
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(PORT, HOST)
@@ -32,8 +35,9 @@ def main():
     try:
         loop.start()
     except KeyboardInterrupt:
-        queue.sync_q.put(None)
-        asyncio_loop.run_until_complete(notifications_task)
+        if sync_queue:
+            sync_queue.put(None)
+            asyncio_loop.run_until_complete(notifications_task)
         loop.stop()
     finally:
         loop.close()
