@@ -11,6 +11,30 @@ WHERE
     username = %s    
 """
 
+    tokens_auth = """
+SELECT
+    u.username, t.verify_token
+FROM
+    tokens t
+    INNER JOIN users u
+        ON t.user_id = u.user_id
+WHERE
+    t.select_token = %s
+        and
+    t.expires_in >= extract(epoch from now())
+    """
+
+    tokens_renew = """
+SELECT
+    u.username, t.verify_token, t.token_id
+FROM
+    tokens t
+    INNER JOIN users u
+        ON t.user_id = u.user_id
+WHERE
+    t.renew_token = %s
+    """
+
     # WITH at the beginning is needed for limiting internal rows selection
     # from tags and quotes_tags tables, e.g. for selecting only tags used
     # with this quotes

@@ -6,6 +6,17 @@ class InsertQueries:
 INSERT INTO users (username, password_hash) VALUES (%s, %s)
     """
 
+    tokens = """
+INSERT INTO 
+    tokens (user_id, select_token, verify_token, renew_token, expires_in)
+SELECT
+    user_id, %s, %s, %s, %s
+FROM
+    users
+WHERE
+    username = %s
+    """
+
     quote = """
 INSERT INTO quotes (quote_title, quote, user_id, datetime) 
 SELECT

@@ -4,7 +4,6 @@ import tornado.escape
 import tornado.web
 
 from .base import WebAuthHandler
-from ..sql.select import SelectQueries
 
 
 class LoginHandler(WebAuthHandler):
@@ -20,20 +19,9 @@ class LoginHandler(WebAuthHandler):
         username = self.get_argument('username')
         password = self.get_argument('password')
 
-        async with self.db_pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                await cur.execute(SelectQueries.users, (username,))
-                _res = await cur.fetchall()
-
-        if _res:
-            password_check = await self.verify_password(
-                _res[0][0].tobytes(),
-                tornado.escape.utf8(password)
-            )
-
-        if not _res or not password_check:
+        check = await self.check_user(username, password)
+        if not check:
             raise tornado.web.HTTPError(403, 'invalid username or password')
-
         self.set_secure_cookie('username', username)
 
         next_uri = self.get_secure_cookie('next')
