@@ -15,9 +15,10 @@ from .handlers.home import HomeHandler
 
 
 class WebQuotesApp(tornado.web.Application):
-    def __init__(self, loop, db_pool):
+    def __init__(self, loop, db_pool, queue=None):
         self.loop = loop
         self.db_pool = db_pool
+        self.queue = queue
 
         # Additional pool executor for blocking operations
         self.pool_executor = ThreadPoolExecutor(max_workers=WORKERS)

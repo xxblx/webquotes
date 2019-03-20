@@ -8,11 +8,12 @@ WebQuotes was designed for personal usage.
 * Python 3.5+ and Tornado, PostgreSQL and aiopg, libsodium and pynacl
 * Simple frontend without modern javascript-powered ui
 * Random quote, tags, ranking system
+* Telegram notifications about new quotes
 
 ## TODO
 * API: add quotes, get a random quote, etc
 * Notifications 
-  * Telegram
+  * ~~Telegram~~
   * Web notifications (websockets + small notification block with suggestion to reload a page)
 * Search
 

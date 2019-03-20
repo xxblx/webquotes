@@ -52,6 +52,11 @@ class AddQuoteHandler(WebAuthHandler):
                     _tags_args = tags + [_res[0][0], _res[0][0]]
                     await cur.execute(_sql, _tags_args)
 
+        # Send external notifications
+        if self.queue is not None:
+            _args = (_res[0][0], text, title)
+            await self.queue.put(_args)
+
         self.redirect('/')
 
 

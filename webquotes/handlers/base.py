@@ -20,6 +20,10 @@ class BaseHandler(tornado.web.RequestHandler):
     def db_pool(self):
         return self.application.db_pool
 
+    @property
+    def queue(self):
+        return self.application.queue
+
     async def verify_password(self, hashed, password):
         """ Compare entered password with exist password hash
 
