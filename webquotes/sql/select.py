@@ -55,8 +55,8 @@ SELECT
     quote_title, 
     quote, 
     datetime, 
-    array_agg(to_json(t)), 
-    r.value
+    array_agg(to_json(t)) quote_tags, 
+    r.value quote_rating
 FROM
     quotes q
     
@@ -107,8 +107,8 @@ ORDER BY
         quote_title, 
         quote, 
         datetime, 
-        array_agg(to_json(t)),
-        r.value
+        array_agg(to_json(t)) quote_tags,
+        r.value quote_rating
     FROM
         quotes q
 
@@ -144,8 +144,8 @@ SELECT
     quote_title, 
     quote, 
     datetime,
-    array_agg(to_json(t)),
-    r.value
+    array_agg(to_json(t)) quote_tags,
+    r.value quote_rating
 FROM
     quotes q
     
@@ -196,8 +196,8 @@ SELECT
     quote_title, 
     quote, 
     datetime,
-    array_agg(to_json(t)),
-    r.value
+    array_agg(to_json(t)) quote_tags,
+    r.value quote_rating
 FROM
     quotes q
     

@@ -14,6 +14,11 @@ from .handlers.content import (AddQuoteHandler, GetRandomQuoteHandler,
                                GetQuoteHandler, RateQuoteHandler)
 from .handlers.home import HomeHandler
 
+from .handlers.api.base import TestApiHandler
+from .handlers.api.content import (APIAddQuoteHandler, APIGetRandomQuote,
+                                   APIGetQuotesHandler, APIRateQuoteHandler)
+from .handlers.api.tokens import GetTokensHandler, RenewTokensHandler
+
 
 class WebQuotesApp(tornado.web.Application):
     def __init__(self, loop, db_pool, queue=None):
@@ -33,8 +38,18 @@ class WebQuotesApp(tornado.web.Application):
             (r'/random', GetRandomQuoteHandler),
             (r'/tag/([0-9]*/?)', HomeHandler),
             (r'/rate/up/([0-9]*/?)', RateQuoteHandler),
-            (r'/rate/down/([0-9]*/?)', RateQuoteHandler)
+            (r'/rate/down/([0-9]*/?)', RateQuoteHandler),
+
+            (r'/api/tokens/get', GetTokensHandler),
+            (r'/api/tokens/renew', RenewTokensHandler),
+
+            (r'/api/quotes/add', APIAddQuoteHandler),
+            (r'/api/quotes/get', APIGetQuotesHandler),
+            (r'/api/quotes/random', APIGetRandomQuote),
+            (r'/api/quotes/rate', APIRateQuoteHandler)
         ]
+        if DEBUG:
+            handlers.append((r'/api/test', TestApiHandler))
 
         template_path = os.path.join(os.path.dirname(__file__), 'templates')
         static_path = os.path.join(os.path.dirname(__file__), 'static')
