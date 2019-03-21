@@ -27,7 +27,7 @@ class AddQuoteHandler(WebAuthHandler):
             return
 
         if tags:
-            tags = tags.split(',')
+            tags = list(map(lambda x: x.strip(' '), tags.split(',')))
         # Because html template uses textarea usually the value is
         # an empty string after get_argument
         else:
