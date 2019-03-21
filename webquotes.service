@@ -1,0 +1,14 @@
+[Unit]
+Description=Start tornado web server with WebQuotes app
+After=network.target
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=quotesuser
+ExecStart=/usr/bin/python3 %h/webquotes/run_webquotes.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
