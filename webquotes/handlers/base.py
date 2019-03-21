@@ -3,8 +3,9 @@
 import nacl.exceptions
 import nacl.pwhash
 
-import tornado.web
 import tornado.concurrent
+import tornado.escape
+import tornado.web
 
 from ..sql.select import SelectQueries
 

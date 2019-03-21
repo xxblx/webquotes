@@ -84,13 +84,13 @@ class RenewTokensHandler(BaseTokensHandler):
                 await cur.execute(SelectQueries.tokens_renew, (renew_token,))
                 _res = await cur.fetchall()
 
-        check = False
-        if _res:
-            username = _res[0][0]
-            verify_token_hashed = _res[0][1].tobytes()
-            token_id = _res[0][2]
-            check = await self.check_verify_token(verify_token,
-                                                  verify_token_hashed)
+        if not _res:
+            raise tornado.web.HTTPError(403, 'invalid tokens')
+
+        username, verify_token_hashed, token_id  = _res[0]
+        verify_token_hashed = verify_token_hashed.tobytes()
+
+        check = await self.check_verify_token(verify_token, verify_token_hashed)
         if not check:
             raise tornado.web.HTTPError(403, 'invalid tokens')
 

@@ -10,12 +10,9 @@ import tornado.web
 from .conf import DEBUG, WORKERS, TOKEN_EXPIRES_TIME
 
 from .handlers.auth import LoginHandler, LogoutHandler
-from .handlers.content import (AddQuoteHandler, GetQuoteHandler, RateQuote,
-                               GetRandomQuoteHandler)
+from .handlers.content import (AddQuoteHandler, GetRandomQuoteHandler,
+                               GetQuoteHandler, RateQuoteHandler)
 from .handlers.home import HomeHandler
-
-from .handlers.api.base import TestApiHandler
-from .handlers.api.tokens import GetTokensHandler, RenewTokensHandler
 
 
 class WebQuotesApp(tornado.web.Application):
@@ -35,11 +32,8 @@ class WebQuotesApp(tornado.web.Application):
             (r'/quote/([0-9]*/?)', GetQuoteHandler),
             (r'/random', GetRandomQuoteHandler),
             (r'/tag/([0-9]*/?)', HomeHandler),
-            (r'/rate/up/([0-9]*/?)', RateQuote),
-            (r'/rate/down/([0-9]*/?)', RateQuote),
-            (r'/api/tokens/get', GetTokensHandler),
-            (r'/api/tokens/renew', RenewTokensHandler),
-            (r'/api/test', TestApiHandler)
+            (r'/rate/up/([0-9]*/?)', RateQuoteHandler),
+            (r'/rate/down/([0-9]*/?)', RateQuoteHandler)
         ]
 
         template_path = os.path.join(os.path.dirname(__file__), 'templates')

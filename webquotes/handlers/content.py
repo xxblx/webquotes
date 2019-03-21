@@ -89,7 +89,7 @@ class GetRandomQuoteHandler(WebAuthHandler):
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(SelectQueries.random_quote)
-                _res = await  cur.fetchall()
+                _res = await cur.fetchall()
 
         if _res:
             item = _res[0]
@@ -103,18 +103,22 @@ class GetRandomQuoteHandler(WebAuthHandler):
             self.redirect('/')
 
 
-class RateQuote(WebAuthHandler):
+class RateQuoteHandler(WebAuthHandler):
     @tornado.web.authenticated
     async def get(self, quote_id):
         redirect_uri = self.get_argument('next', '/')
         action = self.request.uri.split('/')[2]
+
+        # "up" and "down" values are hardcoded in handlers list
+        # in `WebQuotesApp` class. That means the app prevents passing
+        # something else, so lazy `if ... up else down` checking is enough
         if action == 'up':
-            func = SelectQueries.quote_rating_up
-        elif action == 'down':
-            func = SelectQueries.quote_rating_down
+            query = SelectQueries.quote_rating_up
+        else:
+            query = SelectQueries.quote_rating_down
 
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
-                await cur.execute(func, (quote_id,))
+                await cur.execute(query, (quote_id,))
 
         self.redirect(redirect_uri)
