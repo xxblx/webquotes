@@ -22,8 +22,8 @@ class CreateQuery:
 class CreateUsers(CreateQuery):
     name = 'users'
     cols_dct = {
-        'user_id': 'SERIAL PRIMARY KEY',
-        'username': 'TEXT',
+        'user_id': 'SERIAL PRIMARY KEY CHECK (user_id != -1)',
+        'username': 'TEXT UNIQUE',
         'password_hash': 'BYTEA'
     }
 
@@ -62,7 +62,7 @@ class CreateQuotes(CreateQuery):
         'quote_id': 'SERIAL PRIMARY KEY',
         'quote_title': 'TEXT DEFAULT NULL',
         'quote': 'TEXT',
-        'user_id': 'SERIAL',
+        'user_id': 'INTEGER',
         'datetime': 'INTEGER'
     }
 
@@ -166,9 +166,9 @@ CREATE OR REPLACE FUNCTION rating_increase(_quote_id INT) RETURNS INT AS $BODY$
         ON CONFLICT (quote_id)
             DO UPDATE
             SET value = rating.value + 1;
-        RETURN _quote_id;
+        RETURN (SELECT value FROM rating WHERE quote_id = _quote_id);
     END;
-$BODY$ LANGUAGE plpgsql;    
+$BODY$ LANGUAGE plpgsql;
     """
 
     rating_decrease = """
@@ -179,9 +179,9 @@ CREATE OR REPLACE FUNCTION rating_decrease(_quote_id INT) RETURNS INT AS $BODY$
         ON CONFLICT (quote_id)
             DO UPDATE
             SET value = rating.value - 1;
-        RETURN _quote_id;
+        RETURN (SELECT value FROM rating WHERE quote_id = _quote_id);
     END;
-$BODY$ LANGUAGE plpgsql;    
+$BODY$ LANGUAGE plpgsql;
     """
 
     new_rating = """

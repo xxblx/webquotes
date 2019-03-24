@@ -6,6 +6,7 @@ WebQuotes is a simple web application for quotes posting designed for personal u
 * Simple frontend without modern javascript-powered ui
 * Random quote, tags, ranking system
 * Telegram notifications about new quotes
+* Handler for telegram bot based on webhooks for rating quotes, getting random quotes, saving messages as quotes from telegram chat via bot's commands
 * API with token-based auth 
 * [Python](https://www.python.org/) and [Tornado](http://www.tornadoweb.org), [PostgreSQL](https://www.postgresql.org) and [aiopg](https://github.com/aio-libs/aiopg), [janus](https://github.com/aio-libs/janus), [pynacl](https://github.com/pyca/pynacl)
 

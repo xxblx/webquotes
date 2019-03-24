@@ -29,6 +29,13 @@ RETURNING
     quote_id
     """
 
+    quote_bot = """
+INSERT INTO quotes (quote, user_id, datetime) 
+VALUES (%s, -1, %s)
+RETURNING 
+    quote_id  
+    """
+
     quote_tags = """   
 WITH
     provided_tags(tag_name) as (

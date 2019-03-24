@@ -23,8 +23,9 @@ DEBUG = False
 REGISTRATION = False  # allow to users create new accounts
 
 # Address isn't used in the app (e.g. template system) directly
-# It is needed for external services like notifications
+# It is needed for external services like notifications, telegram bot, etc
 ADDRESS = 'http://localhost:8888'
+
 EXTERNAL_NOTIFICATIONS = {
     'telegram': {
         'enabled': False,
@@ -47,3 +48,22 @@ TG_BOT = {
 TG_BOT['set_webhook_url'] = TG_BOT['set_webhook_url'] % TG_BOT['bot_id']
 TG_BOT['delete_webhook_url'] = TG_BOT['delete_webhook_url'] % TG_BOT['bot_id']
 TG_BOT['url'] = ADDRESS + '/tgbot/' + TG_BOT['url_token']
+
+TG_BOT_MESSAGES = {
+    'rate': 'Quote #%d rating: %d',
+    'quote': """
+<a href="%(quote_url)s">#%(id)d</a>: %(title)s
+%(text)s
+<a href="%(rate_up_url)s">like</a> / <a href="%(rate_down_url)s">dislike</a>
+    """,
+    'help': """
+/help - show help
+/random - get random quote
+/like - rank up quote (use in reply message only)
+/dislike - rank down quote (use in reply message only)
+/save - save a message as a new quote (use in reply message only)
+    """,
+    'invalid': """
+Seems you are doing something wrong. Please check /help and try again.
+    """
+}
