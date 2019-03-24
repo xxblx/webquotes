@@ -32,3 +32,18 @@ EXTERNAL_NOTIFICATIONS = {
         'chat_id': 0
     }
 }
+
+TG_BOT = {
+    'enabled': False,
+    'bot_username': 'your_bot_username',
+    'bot_id': 'id',
+    'chat_id': 0,
+    # Keep this token in secret to be sure that only Telegram will
+    # send requests to bot url
+    'url_token': 'some_secret_token',
+    'set_webhook_url': 'https://api.telegram.org/bot%s/setWebhook',
+    'delete_webhook_url': 'https://api.telegram.org/bot%s/deleteWebhook',
+}
+TG_BOT['set_webhook_url'] = TG_BOT['set_webhook_url'] % TG_BOT['bot_id']
+TG_BOT['delete_webhook_url'] = TG_BOT['delete_webhook_url'] % TG_BOT['bot_id']
+TG_BOT['url'] = ADDRESS + '/tgbot/' + TG_BOT['url_token']

@@ -7,7 +7,7 @@ import aiopg
 import nacl.utils
 import tornado.web
 
-from .conf import DEBUG, WORKERS, TOKEN_EXPIRES_TIME
+from .conf import DEBUG, WORKERS, TOKEN_EXPIRES_TIME, TG_BOT
 
 from .handlers.auth import LoginHandler, LogoutHandler
 from .handlers.content import (AddQuoteHandler, GetRandomQuoteHandler,
@@ -19,8 +19,12 @@ from .handlers.api.content import (APIAddQuoteHandler, APIGetRandomQuote,
                                    APIGetQuotesHandler, APIRateQuoteHandler)
 from .handlers.api.tokens import GetTokensHandler, RenewTokensHandler
 
+from .handlers.tgbot.base import TGBotHandler
+
 
 class WebQuotesApp(tornado.web.Application):
+    tg_bot = None
+
     def __init__(self, loop, db_pool, queue=None):
         self.loop = loop
         self.db_pool = db_pool
@@ -50,6 +54,9 @@ class WebQuotesApp(tornado.web.Application):
         ]
         if DEBUG:
             handlers.append((r'/api/test', TestApiHandler))
+        if TG_BOT['enabled']:
+            self.tg_bot = TG_BOT
+            handlers.append((r'/tgbot/' + TG_BOT['url_token'], TGBotHandler))
 
         template_path = os.path.join(os.path.dirname(__file__), 'templates')
         static_path = os.path.join(os.path.dirname(__file__), 'static')

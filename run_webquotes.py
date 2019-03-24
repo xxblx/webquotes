@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from urllib.parse import urlencode
+from urllib.request import urlopen
+
 import janus
 
 import tornado.httpserver
 import tornado.ioloop
 
 from webquotes.app import WebQuotesApp, init_db
-from webquotes.conf import DSN, EXTERNAL_NOTIFICATIONS, HOST, PORT
+from webquotes.conf import (ADDRESS, DSN, EXTERNAL_NOTIFICATIONS, HOST, PORT,
+                            TG_BOT)
 from webquotes.notifications.external.manager import run_manager
 
 
@@ -15,6 +19,13 @@ def main():
     loop = tornado.ioloop.IOLoop.current()
     asyncio_loop = loop.asyncio_loop
     db_pool = loop.asyncio_loop.run_until_complete(init_db(DSN))
+
+    # Set WebHook for Telegram Bot
+    if TG_BOT['enabled']:
+        urlopen(
+            url=TG_BOT['set_webhook_url'],
+            data=urlencode({'url': TG_BOT['url']}).encode()
+        )
 
     # If some external notifications backend is enabled, create a queue
     # for notification processing and start external sending worker
@@ -38,6 +49,8 @@ def main():
         if sync_queue:
             sync_queue.put(None)
             asyncio_loop.run_until_complete(notifications_task)
+        if TG_BOT['enabled']:
+            urlopen(TG_BOT['delete_webhook_url'])
         loop.stop()
     finally:
         loop.close()
