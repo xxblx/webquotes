@@ -42,8 +42,8 @@ class TGBotHandler(BaseHandler):
         :param cmd: action what to do: rate up or rate down
         :type cmd: str
         """
-        if not (msg['from']['username'] == TG_BOT['bot_username'] and
-                msg['from']['is_bot'] and 'entities' in msg):
+        if not (msg['from']['is_bot'] and 'entities' in msg and
+                msg['from']['username'] == TG_BOT['bot_username']):
             return
 
         # Extract quote_id from url, the url had been inserted into
@@ -110,12 +110,7 @@ class TGBotHandler(BaseHandler):
         :type msg: dict
         """
         now = mktime(datetime.now().utctimetuple())  # unix timestamp
-        if (msg['from']['username'] == TG_BOT['bot_username'] or
-                msg['from']['is_bot']):
-            return
-
-        # text, datetime
-        _quote_args = (msg['text'], now)
+        _quote_args = (msg['text'], now)  # text, datetime
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 # Insert quote to db and return quote_id
