@@ -17,6 +17,43 @@ WebQuotes is a simple web application for quotes posting designed for personal u
     * Web notifications (websockets + small notification block with suggestion to reload a page)
 * Search
 
+## Telegram Bot
+Enter valid `bot_id`, `chat_id` and `bot_username` (telegram username) to `TG_BOT` dict (in conf.py) and set the value of `enabled` key to `True`. 
+Keep the value of `url_token` in secret, url `https://example.com/tgbot/some_secret_token` will be registered as a webhook address, e.g. for getting POST requests with updates for the bot from Telegram. 
+
+### Commands 
+* `/help` - show help
+* `/random` - get random quote
+* `/get` - get quotes with given ids
+    * examples
+    * `/get 1`
+    * `/get 2 8`
+* `/like` - rank up quote (use in reply messages)
+* `/dislike` - rank down quote (use in reply messages)
+* `/save` - save a message as a new quote (use in reply messages)
+
+### Restrict access to the webhook url
+It's possible to setup ip address restrictions for requests on the url to be sure that only Telegram can send a request, 
+in case of nginx proxy use something like
+```
+    location ^~ /tgbot/some_secret_token {
+        proxy_pass_header Server;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_pass http://host:port/tgbot/some_secret_token;
+        allow 149.154.167.197/32;
+        allow 149.154.167.198/31;
+        allow 149.154.167.200/29;
+        allow 149.154.167.208/28;
+        allow 149.154.167.224/29;
+        allow 149.154.167.232/31;
+        deny all;
+    }
+```
+IP addresses were got from [Telegram guide to Webhooks](https://core.telegram.org/bots/webhooks)
+
 ## API
 Generally for sending API requests you have to provide valid and unexpired select_token and verify_token as request parameters. 
 
