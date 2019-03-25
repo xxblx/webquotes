@@ -59,6 +59,7 @@ TG_BOT_MESSAGES = {
     'help': """
 /help - show help
 /random - get random quote
+/get - get quotes with given ids (e.g. `/get 1` or `/get 2 8`)
 /like - rank up quote (use in reply message only)
 /dislike - rank down quote (use in reply message only)
 /save - save a message as a new quote (use in reply message only)

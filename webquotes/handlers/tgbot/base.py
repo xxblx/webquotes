@@ -34,6 +34,36 @@ class TGBotHandler(BaseHandler):
             body=body
         )
 
+    async def send_quote(self, quote_id, text, title=None):
+        """ Send message with quote to telegram chat via POST method
+
+        :param quote_id: id of the quote, used in a link to the quote's page
+        :type quote_id: int or str
+        :param text: the quote itself
+        :type text: str
+        :param title: title of the quote if exist
+        :type title: str or None
+        """
+        if title is None:
+            title = ''
+        else:
+            title = '<b>%s</b>' % title
+        message = TG_BOT_MESSAGES['quote'] % {
+            'id': quote_id,
+            'text': text,
+            'title': title,
+            'quote_url': '%s/quote/%d' % (ADDRESS, quote_id),
+            'rate_up_url': '%s/rate/up/%d' % (ADDRESS, quote_id),
+            'rate_down_url': '%s/rate/down/%d' % (ADDRESS, quote_id)
+        }
+        data = {
+            'chat_id': TG_BOT['chat_id'],
+            'disable_web_page_preview': False,
+            'text': message,
+            'parse_mode': 'HTML'
+        }
+        await self.send_message(data)
+
     async def rate_quote(self, msg, cmd):
         """ Rate a quote
 
@@ -83,25 +113,32 @@ class TGBotHandler(BaseHandler):
                 _res = await cur.fetchall()
 
         quote_id, title, text = _res[0][:3]
-        if title is None:
-            title = ''
-        else:
-            title = '<b>%s</b>' % title
-        message = TG_BOT_MESSAGES['quote'] % {
-            'id': quote_id,
-            'text': text,
-            'title': title,
-            'quote_url': '%s/quote/%d' % (ADDRESS, quote_id),
-            'rate_up_url': '%s/rate/up/%d' % (ADDRESS, quote_id),
-            'rate_down_url': '%s/rate/down/%d' % (ADDRESS, quote_id)
-        }
-        data = {
-            'chat_id': TG_BOT['chat_id'],
-            'disable_web_page_preview': False,
-            'text': message,
-            'parse_mode': 'HTML'
-        }
-        await self.send_message(data)
+        await self.send_quote(quote_id, text, title)
+
+    async def get_quotes(self, ids):
+        """ Get quotes by ids from message
+
+        :param ids: a part of the user's message with quotes ids
+        :type ids: str
+        """
+        int_ids = set()
+        for item in ids.split(' '):
+            if not item:
+                continue
+            try:
+                int_ids.add(int(item))
+            except ValueError:
+                pass
+
+        for quote_id in int_ids:
+            args = (quote_id, quote_id)
+            async with self.db_pool.acquire() as conn:
+                async with conn.cursor() as cur:
+                    await cur.execute(SelectQueries.quote_by_id, args)
+                    _res = await cur.fetchall()
+
+            quote_id, title, text = _res[0][:3]
+            await self.send_quote(quote_id, text, title)
 
     async def save_quote(self, msg):
         """ Save a quote
@@ -175,6 +212,14 @@ class TGBotHandler(BaseHandler):
                 await self.save_quote(message['reply_to_message'])
             elif cmd == '/random':
                 await self.get_random_quote()
+            elif cmd == '/get':
+                # Select substring after /get
+                _ids = message['text'].split('/get')[1]
+                # If the substring is not empty get another substring
+                # up to nearest / symbol in case a message has a few commands
+                if _ids:
+                    _ids = _ids.split('/')[0]
+                    await self.get_quotes(_ids)
             elif cmd == '/help':
                 await self.show_help()
             else:
