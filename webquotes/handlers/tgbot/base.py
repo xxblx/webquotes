@@ -166,10 +166,10 @@ class TGBotHandler(BaseHandler):
         message = TG_BOT_MESSAGES['quote'] % {
             'id': quote_id,
             'text': msg['text'],
+            'rating': 0,
             'title': '',
             'quote_url': '%s/quote/%d' % (ADDRESS, quote_id),
-            'rate_up_url': '%s/rate/up/%d' % (ADDRESS, quote_id),
-            'rate_down_url': '%s/rate/down/%d' % (ADDRESS, quote_id)
+            'tags': ''
         }
         data = {
             'chat_id': TG_BOT['chat_id'],
