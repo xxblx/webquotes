@@ -158,7 +158,7 @@ class TGBotHandler(BaseHandler):
 
         :param msg: user's message for saving as a new quote
         :type msg: dict
-        :param tags: a list of tags entered by user via hashcodes
+        :param tags: a list of tags entered by user via hashtags
             with /save command
         :type tags: list or None
         """

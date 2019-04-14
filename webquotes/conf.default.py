@@ -58,12 +58,13 @@ Rating: %(rating)d
 %(tags)s
     """,
     'help': """
-/help - show help
-/random - get random quote
-/get - get quotes with given ids (e.g. `/get 1` or `/get 2 8`)
-/like - rank up quote (use in reply message only)
-/dislike - rank down quote (use in reply message only)
-/save - save a message as a new quote (use in reply message only)
+* /help - show help
+* /random - get random quote
+* /get - get quotes with given ids (e.g. `/get 1` or `/get 2 8`)
+* /like - rank up quote (use in reply messages only)
+* /dislike - rank down quote (use in reply messages only)
+* /save - save a message as a new quote (use in reply messages only)
+* add tags via hashtags, e.g. `/save #tag1 #tag2 #tag3`
     """,
     'invalid': """
 Seems you are doing something wrong. Please check /help and try again.

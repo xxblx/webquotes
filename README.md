@@ -31,6 +31,7 @@ Keep the value of `url_token` in secret, url `https://example.com/tgbot/some_sec
 * `/like` - rank up quote (use in reply messages)
 * `/dislike` - rank down quote (use in reply messages)
 * `/save` - save a message as a new quote (use in reply messages)
+  * add tags via hashtags, e.g. `/save #tag1 #tag2 #tag3`
 
 ### Restrict access to the webhook url
 It's possible to setup ip address restrictions for requests on the url to be sure that only Telegram can send a request, 
