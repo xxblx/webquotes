@@ -14,9 +14,9 @@ class NotificationsManager:
             tg_backend = TelegramBackend(**kw)
             self.backends.add(tg_backend)
 
-    async def send_notification(self, quote_id, text, title=None):
+    async def send_notification(self, quote_id, text, title=None, tags=None):
         for backend in self.backends:
-            await backend.send_notification(quote_id, text, title)
+            await backend.send_notification(quote_id, text, title, tags)
 
 
 async def run_manager(queue):

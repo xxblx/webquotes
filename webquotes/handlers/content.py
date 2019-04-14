@@ -54,7 +54,7 @@ class AddQuoteHandler(WebAuthHandler):
 
         # Send external notifications
         if self.queue is not None:
-            _args = (_res[0][0], text, title)
+            _args = (_res[0][0], text, title, tags)
             await self.queue.put(_args)
 
         self.redirect('/')

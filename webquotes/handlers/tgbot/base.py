@@ -34,7 +34,7 @@ class TGBotHandler(BaseHandler):
             body=body
         )
 
-    async def send_quote(self, quote_id, text, title=None):
+    async def send_quote(self, quote_id, text, rating, title=None, tags=None):
         """ Send message with quote to telegram chat via POST method
 
         :param quote_id: id of the quote, used in a link to the quote's page
@@ -48,10 +48,18 @@ class TGBotHandler(BaseHandler):
             title = ''
         else:
             title = '<b>%s</b>' % title
+
+        if tags:
+            tags = ' '.join('#%s' % tag['tag_name'] for tag in tags if tag)
+        else:
+            tags = ''
+
         message = TG_BOT_MESSAGES['quote'] % {
             'id': quote_id,
             'text': text,
+            'rating': rating,
             'title': title,
+            'tags': tags,
             'quote_url': '%s/quote/%d' % (ADDRESS, quote_id)
         }
         data = {
@@ -111,7 +119,8 @@ class TGBotHandler(BaseHandler):
                 _res = await cur.fetchall()
 
         quote_id, title, text = _res[0][:3]
-        await self.send_quote(quote_id, text, title)
+        tags, rating = _res[0][4:]
+        await self.send_quote(quote_id, text, rating, title, tags)
 
     async def get_quotes(self, ids):
         """ Get quotes by ids from message
@@ -136,7 +145,8 @@ class TGBotHandler(BaseHandler):
                     _res = await cur.fetchall()
 
             quote_id, title, text = _res[0][:3]
-            await self.send_quote(quote_id, text, title)
+            tags, rating = _res[0][4:]
+            await self.send_quote(quote_id, text, rating, title, tags)
 
     async def save_quote(self, msg):
         """ Save a quote

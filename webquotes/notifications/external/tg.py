@@ -12,6 +12,8 @@ class TelegramBackend:
     tmpl = """
 <a href="%(quote_url)s">#%(id)d</a>: %(title)s
 %(text)s
+Rating: 0
+%(tags)s
 """
 
     def __init__(self, bot_id, chat_id):
@@ -19,15 +21,22 @@ class TelegramBackend:
         self.chat_id = chat_id
         self.url = self.base_url % bot_id
 
-    async def send_notification(self, quote_id, text, title):
+    async def send_notification(self, quote_id, text, title, tags):
         if title is None:
             title = ''
         else:
             title = '<b>%s</b>' % title
+
+        if tags:
+            tags = ' '.join('#%s' % tag for tag in tags)
+        else:
+            tags = ''
+
         message = self.tmpl % {
             'id': quote_id,
             'text': text,
             'title': title,
+            'tags': tags,
             'quote_url': '%s/quote/%d' % (ADDRESS, quote_id)
         }
         data = {
