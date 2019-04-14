@@ -54,7 +54,6 @@ TG_BOT_MESSAGES = {
     'quote': """
 <a href="%(quote_url)s">#%(id)d</a>: %(title)s
 %(text)s
-<a href="%(rate_up_url)s">like</a> / <a href="%(rate_down_url)s">dislike</a>
     """,
     'help': """
 /help - show help

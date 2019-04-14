@@ -12,7 +12,6 @@ class TelegramBackend:
     tmpl = """
 <a href="%(quote_url)s">#%(id)d</a>: %(title)s
 %(text)s
-<a href="%(rate_up_url)s">like</a> / <a href="%(rate_down_url)s">dislike</a>
 """
 
     def __init__(self, bot_id, chat_id):
@@ -29,9 +28,7 @@ class TelegramBackend:
             'id': quote_id,
             'text': text,
             'title': title,
-            'quote_url': '%s/quote/%d' % (ADDRESS, quote_id),
-            'rate_up_url': '%s/rate/up/%d' % (ADDRESS, quote_id),
-            'rate_down_url': '%s/rate/down/%d' % (ADDRESS, quote_id)
+            'quote_url': '%s/quote/%d' % (ADDRESS, quote_id)
         }
         data = {
             'chat_id': self.chat_id,
