@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import re
 from datetime import datetime
 from time import mktime
 from urllib.parse import urlencode, urlparse
@@ -41,8 +42,12 @@ class TGBotHandler(BaseHandler):
         :type quote_id: int or str
         :param text: the quote itself
         :type text: str
+        :param rating: the quote's rating
+        :type rating: int
         :param title: title of the quote if exist
         :type title: str or None
+        :param tags: a list of tags
+        :type tags: list or None
         """
         if title is None:
             title = ''
@@ -148,11 +153,14 @@ class TGBotHandler(BaseHandler):
             tags, rating = _res[0][4:]
             await self.send_quote(quote_id, text, rating, title, tags)
 
-    async def save_quote(self, msg):
+    async def save_quote(self, msg, tags=None):
         """ Save a quote
 
         :param msg: user's message for saving as a new quote
         :type msg: dict
+        :param tags: a list of tags entered by user via hashcodes
+            with /save command
+        :type tags: list or None
         """
         now = mktime(datetime.now().utctimetuple())  # unix timestamp
         _quote_args = (msg['text'], now)  # text, datetime
@@ -163,13 +171,18 @@ class TGBotHandler(BaseHandler):
                 _res = await cur.fetchall()
 
         quote_id = _res[0][0]
+        if tags:
+            tags = ' '.join('#%s' % tag for tag in tags)
+        else:
+            tags = ''
+
         message = TG_BOT_MESSAGES['quote'] % {
             'id': quote_id,
             'text': msg['text'],
             'rating': 0,
             'title': '',
             'quote_url': '%s/quote/%d' % (ADDRESS, quote_id),
-            'tags': ''
+            'tags': tags
         }
         data = {
             'chat_id': TG_BOT['chat_id'],
@@ -217,7 +230,10 @@ class TGBotHandler(BaseHandler):
                     continue
                 await self.rate_quote(message['reply_to_message'], cmd)
             elif cmd == '/save' and 'reply_to_message' in message:
-                await self.save_quote(message['reply_to_message'])
+                tags = None
+                if '#' in message['text']:
+                    tags = re.findall('#(\w+)', message['text'])
+                await self.save_quote(message['reply_to_message'], tags)
             elif cmd == '/random':
                 await self.get_random_quote()
             elif cmd == '/get':
