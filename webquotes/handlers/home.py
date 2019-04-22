@@ -20,12 +20,17 @@ class HomeHandler(WebAuthHandler):
         if self.request.uri.startswith('/tag') and tag_id is not None:
             args = (tag_id.rstrip('/'), offset, num)
             sql = SelectQueries.quotes_by_tag
-            uri = self.request.uri.rstrip('/')
+            uri = '/tag/%s' % tag_id.rstrip('/')
+        # host/top/
+        elif self.request.uri.startswith('/top'):
+            args = (offset, num)
+            sql = SelectQueries.top_rated_quotes
+            uri = '/top'
         # host/
         else:
             args = (offset, num)
             sql = SelectQueries.quotes
-            uri = self.request.uri
+            uri = '/'
 
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:

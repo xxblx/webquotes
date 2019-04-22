@@ -41,6 +41,7 @@ class WebQuotesApp(tornado.web.Application):
             (r'/quote/([0-9]*/?)', GetQuoteHandler),
             (r'/random', GetRandomQuoteHandler),
             (r'/tag/([0-9]*/?)', HomeHandler),
+            (r'/top', HomeHandler),
             (r'/rate/up/([0-9]*/?)', RateQuoteHandler),
             (r'/rate/down/([0-9]*/?)', RateQuoteHandler),
 

@@ -225,6 +225,54 @@ GROUP BY
     q.quote_id, r.value
     """
 
+    top_rated_quotes = """
+WITH quotes_ids AS (
+    SELECT
+        quote_id
+    FROM
+        rating
+    ORDER BY
+        value DESC
+    OFFSET %s ROWS
+    FETCH FIRST %s ROWS ONLY
+)
+
+SELECT
+    q.quote_id, 
+    quote_title, 
+    quote, 
+    datetime, 
+    array_agg(to_json(t)) quote_tags, 
+    r.value quote_rating
+FROM
+    quotes q
+    
+    INNER JOIN quotes_ids qi
+        ON q.quote_id = qi.quote_id
+    
+    LEFT JOIN
+    (SELECT
+        tq.quote_id, 
+        tq.tag_id,
+        t.tag_name
+    FROM
+        tags_quotes tq 
+        INNER JOIN tags t
+            ON tq.tag_id = t.tag_id
+        
+        INNER JOIN quotes_ids qi
+            ON tq.quote_id = qi.quote_id
+    ) t
+        ON q.quote_id = t.quote_id
+        
+    INNER JOIN rating r
+        ON q.quote_id = r.quote_id
+GROUP BY
+    q.quote_id, r.value
+ORDER BY
+    r.value DESC
+    """
+
     quote_rating_up = """
 SELECT rating_increase(%s)
     """
