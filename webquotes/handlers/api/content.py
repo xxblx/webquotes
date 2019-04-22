@@ -48,8 +48,8 @@ class APIGetQuotesHandler(ApiHandler):
     async def get(self):
         quote_id = self.get_argument('quote_id', None)
         tag_id = self.get_argument('tag_id', None)
-        offset = self.get_argument('offset', 0)
-        num = self.get_argument('num', 100)
+        offset = int(self.get_argument('offset', 0))
+        num = int(self.get_argument('num', 100))
         if not (0 < num <= 500):
             num = 100
 
@@ -88,6 +88,34 @@ class APIGetRandomQuote(ApiHandler):
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(SelectQueries.random_quote)
+                _res = await cur.fetchall()
+                keys = [col.name for col in cur.description]
+
+        # Make a dict with the results for JSON sending to the client
+        results = {
+            'data': [],
+            'count': len(_res)
+        }
+        for row in _res:
+            dct = {keys[i]: row[i] for i in range(len(keys))}
+            results['data'].append(dct)
+        self.write(results)
+
+
+class APIGetTopRatedQuotesHandler(ApiHandler):
+    async def get(self):
+        offset = int(self.get_argument('offset', 0))
+        num = int(self.get_argument('num', 100))
+        if not (0 < num <= 500):
+            num = 100
+
+        # Get N quotes
+        args = (offset, num)
+        query = SelectQueries.top_rated_quotes
+
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(query, args)
                 _res = await cur.fetchall()
                 keys = [col.name for col in cur.description]
 

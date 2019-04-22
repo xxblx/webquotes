@@ -96,7 +96,7 @@ You can get first set of tokens with username and password and then request reis
     * tag_id - request quotes with given tag_id 
     * offset - request quotes not from the beginning, start from `offset` row (default: 0)
     * num - how many quotes request (0-500, default: 100)
-* json with quotes like
+* json with quotes reverse-ordered by datetime (the latest at the beginning), example:
 ```json
 {
   "data": [
@@ -128,6 +128,14 @@ You can get first set of tokens with username and password and then request reis
 * uri: /api/quotes/random
 * method: GET
 * returns: json with one quote
+
+### Get top rated quotes
+* uri: /api/quotes/top
+* method: GET
+* optional parameters:
+    * offset - request quotes not from the beginning, start from `offset` row (default: 0)
+    * num - how many quotes request (0-500, default: 100)
+* json with quotes reverse-ordered by rating (top rated ones at the beginning)
 
 ## License
 WebQuotes is free and opensource software, it is licensed under GNU GPL 3 (or newer) license. Check LICENSE for details.

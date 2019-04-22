@@ -16,6 +16,7 @@ from .handlers.home import HomeHandler
 
 from .handlers.api.base import TestApiHandler
 from .handlers.api.content import (APIAddQuoteHandler, APIGetRandomQuote,
+                                   APIGetTopRatedQuotesHandler,
                                    APIGetQuotesHandler, APIRateQuoteHandler)
 from .handlers.api.tokens import GetTokensHandler, RenewTokensHandler
 
@@ -51,6 +52,7 @@ class WebQuotesApp(tornado.web.Application):
             (r'/api/quotes/add', APIAddQuoteHandler),
             (r'/api/quotes/get', APIGetQuotesHandler),
             (r'/api/quotes/random', APIGetRandomQuote),
+            (r'/api/quotes/top', APIGetTopRatedQuotesHandler),
             (r'/api/quotes/rate', APIRateQuoteHandler)
         ]
         if DEBUG:
