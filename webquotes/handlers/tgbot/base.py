@@ -149,8 +149,26 @@ class TGBotHandler(BaseHandler):
                     await cur.execute(SelectQueries.quote_by_id, args)
                     _res = await cur.fetchall()
 
-            quote_id, title, text = _res[0][:3]
-            tags, rating = _res[0][4:]
+            if _res:
+                quote_id, title, text = _res[0][:3]
+                tags, rating = _res[0][4:]
+                await self.send_quote(quote_id, text, rating, title, tags)
+
+    async def get_top_rated_quotes(self, num=3):
+        """ Get top rated quotes
+
+        :param num: how many quotes get
+        :type num: int
+        """
+        args = (0, num)  # offset, num
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(SelectQueries.top_rated_quotes, args)
+                _res = await cur.fetchall()
+
+        for quote in _res:
+            quote_id, title, text = quote[:3]
+            tags, rating = quote[4:]
             await self.send_quote(quote_id, text, rating, title, tags)
 
     async def save_quote(self, msg, tags=None):
@@ -244,6 +262,17 @@ class TGBotHandler(BaseHandler):
                 if _ids:
                     _ids = _ids.split('/')[0]
                     await self.get_quotes(_ids)
+            elif cmd == '/top':
+                num = 3
+                _num = re.findall('/top\s*?(\d+)', message['text'])
+                if _num:
+                    try:
+                        _num = int(_num[0])
+                        if 1 <= _num <= TG_BOT['top_max_count']:
+                            num = _num
+                    except ValueError:
+                        pass
+                await self.get_top_rated_quotes(num)
             elif cmd == '/help':
                 await self.show_help()
             else:

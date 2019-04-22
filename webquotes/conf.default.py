@@ -44,6 +44,7 @@ TG_BOT = {
     'url_token': 'some_secret_token',
     'set_webhook_url': 'https://api.telegram.org/bot%s/setWebhook',
     'delete_webhook_url': 'https://api.telegram.org/bot%s/deleteWebhook',
+    'top_max_count': 10
 }
 TG_BOT['set_webhook_url'] = TG_BOT['set_webhook_url'] % TG_BOT['bot_id']
 TG_BOT['delete_webhook_url'] = TG_BOT['delete_webhook_url'] % TG_BOT['bot_id']
@@ -61,6 +62,8 @@ Rating: %(rating)d
 * /help - show help
 * /random - get random quote
 * /get - get quotes with given ids (e.g. `/get 1` or `/get 2 8`)
+* /top - get top rated quotes
+* use `/top N` where 1 <= N <= 10 for getting top N quotes, default: 3
 * /like - rank up quote (use in reply messages only)
 * /dislike - rank down quote (use in reply messages only)
 * /save - save a message as a new quote (use in reply messages only)

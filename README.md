@@ -28,6 +28,9 @@ Keep the value of `url_token` in secret, url `https://example.com/tgbot/some_sec
     * examples
     * `/get 1`
     * `/get 2 8`
+* `/top` - get three top rated quotes
+    * `/top N` - get N top rated quotes, where 1 <= N <= 10
+    * e.g. `/top 5`
 * `/like` - rank up quote (use in reply messages)
 * `/dislike` - rank down quote (use in reply messages)
 * `/save` - save a message as a new quote (use in reply messages)
