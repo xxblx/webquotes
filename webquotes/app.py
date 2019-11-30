@@ -11,7 +11,7 @@ from .conf import DEBUG, WORKERS, TOKEN_EXPIRES_TIME, TG_BOT
 
 from .handlers.auth import LoginHandler, LogoutHandler
 from .handlers.content import (AddQuoteHandler, GetRandomQuoteHandler,
-                               GetQuoteHandler, RateQuoteHandler)
+                               GetQuoteHandler, RateQuoteHandler, TagsHandler)
 from .handlers.home import HomeHandler
 
 from .handlers.api.base import TestApiHandler
@@ -41,6 +41,7 @@ class WebQuotesApp(tornado.web.Application):
             (r'/add', AddQuoteHandler),
             (r'/quote/([0-9]*/?)', GetQuoteHandler),
             (r'/random', GetRandomQuoteHandler),
+            (r'/tags', TagsHandler),
             (r'/tag/([0-9]*/?)', HomeHandler),
             (r'/top', HomeHandler),
             (r'/rate/up/([0-9]*/?)', RateQuoteHandler),

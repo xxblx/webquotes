@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div class="tags">
+    {% for tag in tags_data %}
+        {% if tag[2] in font_sizes %}
+            <div class="tag" style="font-size: {{ font_sizes[tag[2]] }}em">
+        {% else %}
+            <div class="tag">
+        {% end %}
+                <a href="/tag/{{ tag[0] }}">{{ tag[1] }}</a> ({{ tag[2] }})
+            </div>
+    {% end %}
+</div>
+
+{% end %}

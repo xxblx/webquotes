@@ -122,3 +122,26 @@ class RateQuoteHandler(WebAuthHandler):
                 await cur.execute(query, (quote_id,))
 
         self.redirect(redirect_uri)
+
+
+class TagsHandler(WebAuthHandler):
+    @tornado.web.authenticated
+    async def get(self):
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(SelectQueries.tags)
+                _res = await cur.fetchall()
+
+        # Make most used tags bigger on the page
+        # quotes amount with a tag: font-size value in em
+        font_sizes = {}
+        if len(_res) >= 20:
+            counts = {tag[2] for tag in _res}
+            # font-size (em)
+            size, max_size = 0.85, 1.5
+            step = (max_size - size) / (len(counts)-1)
+            for c in counts:
+                font_sizes[c] = size
+                size += step
+
+        self.render('tags.html', tags_data=_res, font_sizes=font_sizes)

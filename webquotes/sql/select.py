@@ -280,3 +280,23 @@ SELECT rating_increase(%s)
     quote_rating_down = """
 SELECT rating_decrease(%s);
     """
+
+    tags = """
+SELECT
+    tags.tag_id,
+    tags.tag_name,
+    t.c
+FROM
+    (SELECT
+        tag_id,
+        count(1) c
+    FROM
+        tags_quotes
+    GROUP BY
+        tag_id) t
+    
+    INNER JOIN tags
+        on t.tag_id = tags.tag_id
+ORDER BY
+    t.c DESC
+    """
