@@ -148,3 +148,31 @@ class APIRateQuoteHandler(ApiHandler):
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(query, (quote_id,))
+
+
+class APIGetTagsHandler(ApiHandler):
+    async def get(self):
+        offset = int(self.get_argument('offset', 0))
+        num = int(self.get_argument('num', 100))
+        if not (0 < num <= 500):
+            num = 100
+
+        # Get N tags
+        args = (offset, num)
+        query = SelectQueries.tags_limited
+
+        async with self.db_pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(query, args)
+                _res = await cur.fetchall()
+                keys = [col.name for col in cur.description]
+
+        # Make a dict with the results for JSON sending to the client
+        results = {
+            'data': [],
+            'count': len(_res)
+        }
+        for row in _res:
+            dct = {keys[i]: row[i] for i in range(len(keys))}
+            results['data'].append(dct)
+        self.write(results)

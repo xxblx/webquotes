@@ -99,7 +99,8 @@ You can get first set of tokens with username and password and then request reis
     * tag_id - request quotes with given tag_id 
     * offset - request quotes not from the beginning, start from `offset` row (default: 0)
     * num - how many quotes request (0-500, default: 100)
-* json with quotes reverse-ordered by datetime (the latest at the beginning), example:
+* json data with quotes is reverse-ordered by datetime (the latest at the beginning). It means `offset` allows to request old quotes if more than 500 have been added.
+
 ```json
 {
   "data": [
@@ -138,7 +139,33 @@ You can get first set of tokens with username and password and then request reis
 * optional parameters:
     * offset - request quotes not from the beginning, start from `offset` row (default: 0)
     * num - how many quotes request (0-500, default: 100)
-* json with quotes reverse-ordered by rating (top rated ones at the beginning)
+* json data with quotes is reverse-ordered by rating (top rated ones at the beginning)
+
+### Get tags
+* uri: /api/tags/get
+* method: GET
+* optional parameters:
+    * offset - request tags not from the beginning, start from `offset` row (default: 0)
+    * num - how many tags request (0-500, default: 100)
+* json data with tags is reverse-ordered by quotes count (most used tags at the beginning). It means `offset` allows to request less popular tags if more than 500 have been added. 
+
+```json
+{
+  "data": [
+    {
+      "tag_id": 19,
+      "tag_name": "test",
+      "quotes_count": 5
+    }, 
+    {
+      "tag_id": 20, 
+      "tag_name": "api", 
+      "quotes_count": 2
+    }
+  ], 
+  "count": 2
+}
+```
 
 ## License
 WebQuotes is free and opensource software, it is licensed under GNU GPL 3 (or newer) license. Check LICENSE for details.

@@ -285,7 +285,7 @@ SELECT rating_decrease(%s);
 SELECT
     tags.tag_id,
     tags.tag_name,
-    t.c
+    t.c quotes_count
 FROM
     (SELECT
         tag_id,
@@ -298,5 +298,29 @@ FROM
     INNER JOIN tags
         on t.tag_id = tags.tag_id
 ORDER BY
-    t.c DESC
+    t.c DESC, tags.tag_name
+    """
+
+    tags_limited = """
+SELECT
+    tags.tag_id,
+    tags.tag_name,
+    t.c quotes_count
+FROM
+    (SELECT
+        tag_id,
+        count(1) c
+    FROM
+        tags_quotes
+    GROUP BY
+        tag_id
+    ORDER BY 
+        c DESC) t
+
+    INNER JOIN tags
+        on t.tag_id = tags.tag_id
+ORDER BY
+    t.c DESC, tags.tag_name
+OFFSET %s ROWS
+FETCH FIRST %s ROWS ONLY
     """
