@@ -19,7 +19,7 @@ WebQuotes is a simple web application for quotes posting designed for personal u
 
 ## Telegram Bot
 Enter valid `bot_id`, `chat_id` and `bot_username` (telegram username) to `TG_BOT` dict (in conf.py) and set the value of `enabled` key to `True`. 
-Keep the value of `url_token` in secret, url `https://example.com/tgbot/some_secret_token` will be registered as a webhook address, e.g. for getting POST requests with updates for the bot from Telegram. 
+Keep the value of `url_token` in secret, url `https://example.com/tgbot/some_secret_token` will be registered as a webhook address, e.g. for getting POST requests with updates for the bot from Telegram. See more information about webhooks in [Telegram guide to Webhooks](https://core.telegram.org/bots/webhooks).
 
 ### Commands 
 * `/help` - show help
@@ -35,28 +35,6 @@ Keep the value of `url_token` in secret, url `https://example.com/tgbot/some_sec
 * `/dislike` - rank down quote (use in reply messages)
 * `/save` - save a message as a new quote (use in reply messages)
   * add tags via hashtags, e.g. `/save #tag1 #tag2 #tag3`
-
-### Restrict access to the webhook url
-It's possible to setup ip address restrictions for requests on the url to be sure that only Telegram can send a request, 
-in case of nginx proxy use something like
-```
-    location ^~ /tgbot/some_secret_token {
-        proxy_pass_header Server;
-        proxy_set_header Host $http_host;
-        proxy_redirect off;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Scheme $scheme;
-        proxy_pass http://host:port/tgbot/some_secret_token;
-        allow 149.154.167.197/32;
-        allow 149.154.167.198/31;
-        allow 149.154.167.200/29;
-        allow 149.154.167.208/28;
-        allow 149.154.167.224/29;
-        allow 149.154.167.232/31;
-        deny all;
-    }
-```
-IP addresses were got from [Telegram guide to Webhooks](https://core.telegram.org/bots/webhooks)
 
 ## API
 Generally for sending API requests you have to provide valid and unexpired select_token and verify_token as request parameters. 
@@ -82,18 +60,19 @@ You can get first set of tokens with username and password and then request reis
 ### Add quote
 * uri: /api/quotes/add
 * method: POST
-* mandatory parameters: text
+* mandatory parameters: select_token, verify_token and text
 * optional parameters: title and tag, tag can be used multiple times if you would like to set a few tags
 * returns: json with quote_id
 
 ### Rate quote
 * uri: /api/quotes/rate
 * method: POST
-* mandatory parameters: quote_id and action ('up' or 'down')
+* mandatory parameters: select_token, verify_token, quote_id and action ('up' or 'down')
 
 ### Get quotes
 * uri: /api/quotes/get
 * method: GET
+* mandatory parameters: select_token and verify_token
 * optional parameters:
     * quote_id - request one quote with given quote_id, if quote_id is used other parameters are ignored
     * tag_id - request quotes with given tag_id 
@@ -131,11 +110,13 @@ You can get first set of tokens with username and password and then request reis
 ### Get random quote
 * uri: /api/quotes/random
 * method: GET
+* mandatory parameters: select_token and verify_token
 * returns: json with one quote
 
 ### Get top rated quotes
 * uri: /api/quotes/top
 * method: GET
+* mandatory parameters: select_token and verify_token
 * optional parameters:
     * offset - request quotes not from the beginning, start from `offset` row (default: 0)
     * num - how many quotes request (0-500, default: 100)
@@ -144,6 +125,7 @@ You can get first set of tokens with username and password and then request reis
 ### Get tags
 * uri: /api/tags/get
 * method: GET
+* mandatory parameters: select_token and verify_token
 * optional parameters:
     * offset - request tags not from the beginning, start from `offset` row (default: 0)
     * num - how many tags request (0-500, default: 100)
