@@ -159,7 +159,7 @@ class APIGetTagsHandler(ApiHandler):
 
         # Get N tags
         args = (offset, num)
-        query = SelectQueries.tags_limited
+        query = SelectQueries.tags_api
 
         async with self.db_pool.acquire() as conn:
             async with conn.cursor() as cur:
