@@ -137,12 +137,14 @@ You can get first set of tokens with username and password and then request reis
     {
       "tag_id": 19,
       "tag_name": "test",
-      "quotes_count": 5
+      "quotes_count": 5,
+      "quotes_ids": [2, 4, 9, 26, 53]
     }, 
     {
       "tag_id": 20, 
       "tag_name": "api", 
-      "quotes_count": 2
+      "quotes_count": 2,
+      "quotes_ids": [53, 87]
     }
   ], 
   "count": 2

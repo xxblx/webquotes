@@ -301,14 +301,16 @@ ORDER BY
     t.c DESC, tags.tag_name
     """
 
-    tags_limited = """
+    tags_api = """
 SELECT
     tags.tag_id,
     tags.tag_name,
-    t.c quotes_count
+    t.c quotes_count, 
+    t.quotes_ids
 FROM
     (SELECT
         tag_id,
+        array_agg(quote_id) quotes_ids,
         count(1) c
     FROM
         tags_quotes
